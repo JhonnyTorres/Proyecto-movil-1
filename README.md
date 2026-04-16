@@ -81,22 +81,24 @@ La aplicación cuenta con las siguientes funcionalidades visuales:
 * Pantalla principal (Home)
 * Cierre de sesión
 
+## 📸 Evidencias
+
 A continuación, se presentan algunas capturas del funcionamiento de la aplicación:
 
 ### 🔐 Inicio de sesión
 ![Login](./assets/Login.jpeg)
-![Login](./assets/Login-1.jpeg)
+![Login formulario](./assets/Login-1.jpeg)
 
 ### 📝 Registro
-![Register](./assets/Register.jpeg)
-![Register](./assets/Register-1.jpeg)
+![Registro](./assets/Register.jpeg)
+![Registro formulario](./assets/Register-1.jpeg)
 
 ### 🏠 Home
 ![Home](./assets/Home.jpeg)
 
 ### 🚪 Cierre de sesión
 ![Logout](./assets/Logout.jpeg)
-![Logout](./assets/Logout-1.jpeg)
+![Logout confirmación](./assets/Logout-1.jpeg)
 
 ---
 

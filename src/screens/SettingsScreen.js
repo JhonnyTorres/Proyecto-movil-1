@@ -1,9 +1,9 @@
-import colors from "../constants/colors";
-import { View, Text, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
-import { useAuth } from "../../navigation/AuthContext";
 import { useNavigation } from "@react-navigation/native";
-import { signOut } from "../services/firebaseService";
-import { auth } from "../services/firebaseService";
+import colors from "../constants/colors";
+import { View, Text, Alert, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import { signOut, auth } from '../services/firebaseService';
+
 
 const SettingsScreen = () => {
     const navigation = useNavigation();
@@ -13,66 +13,30 @@ const SettingsScreen = () => {
         try {
             setLoading(true);
             await signOut(auth);
-            Alert.alert("Sesión cerrada", "Has cerrado tu sesión correctamente", [
-                { text: "OK", onPress: () => navigation.reset({ index: 0, routes: [{ name: 'login' }] }) }
-            ]);
+            Alert.alert('Sesión cerrada 😊', 'Has cerrado tu sesión correctamente', [
+                {
+                    text: 'OK', onPress: () => navigation
+                        .reset({ index: 0, routes: [{ name: 'Login' }] })
+                }
+            ])
         } catch (error) {
-            console.log("Error al cerrar sesión:", error);
-            Alert.alert("Error", "No se pudo cerrar sesión");
+            console.log('Error al cerrar sesión:', error)
+            Alert.alert('Error 😵‍💫', 'No se pudo cerrar la sesión')
         } finally {
             setLoading(false);
         }
     };
-
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Ajustes</Text>
             <TouchableOpacity style={styles.logoutButton} onPress={handleLogout} disabled={loading}>
 
-
-                <text styles={styles.logoutText}>Cerrar Sesión</text>
-
+                <Text style={styles.logoutText}> Cerrar sesión ❌</Text>
 
             </TouchableOpacity>
         </View>
     );
-}
-
-
-//const SettingsScreen = () => {
-const { logout } = useAuth();
-const navigation = useNavigation();
-
-const handleLogout = async () => {
-    Alert.alert(
-        'Cerrar Sesión',
-        '¿Estás seguro de que quieres cerrar sesión?',
-        [
-            { text: 'Cancelar', style: 'cancel' },
-            {
-                text: 'Cerrar Sesión',
-                style: 'destructive',
-                onPress: async () => {
-                    await logout();
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: 'Auth' }],
-                    });
-                }
-            }
-        ]
-    );
 };
-
-return (
-    <View style={styles.container}>
-        <Text>Settings Screen</Text>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Text style={styles.logoutText}>Cerrar Sesión</Text>
-        </TouchableOpacity>
-    </View>
-);
-//};
 
 const styles = {
     container: {
@@ -84,18 +48,25 @@ const styles = {
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 20,
+        color: colors.principal,
+        marginBottom: 10,
+    },
+    subtitle: {
+        fontSize: 16,
+        color: colors.subtle,
     },
     logoutButton: {
-        marginTop: 20,
-        padding: 10,
-        backgroundColor: 'red',
-        borderRadius: 5,
+        marginTop: 24,
+        backgroundColor: colors.error,
+        paddingHorizontal: 24,
+        paddingVertical: 12,
+        borderRadius: 8,
     },
     logoutText: {
-        color: 'white',
+        color: colors.luminous,
         fontSize: 16,
-    }
+        fontWeight: '600',
+    },
 };
 
 export default SettingsScreen;

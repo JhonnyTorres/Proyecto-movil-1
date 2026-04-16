@@ -1,11 +1,11 @@
 export default {
     //Colores principales y variantes
-    principal: '#024d6b',
-    variante1: '#0249b4',
-    variante2: '#4d3bff',
+    principal: '#2563EB',
+    variante1: '#2472e6',
+    variante2: '#2d1cca',
     variante3: '#6e5cff',
     variante4: '#8f7dff',
-    variante5: '#b09eff',
+    variante5: '#6a78b4',
 
     //Colores para el texto y las sombras
     defecto: '#faf7f7',
@@ -17,7 +17,7 @@ export default {
 
     //Colores para los background o fondos
     fondloClaro: '#f5f5f5',
-    fondloOscuro: '#500808',
+    fondloOscuro: '#380202',
 
     //colores de alertas y acciones
     alerta: '#ff4d4d',
@@ -26,7 +26,7 @@ export default {
     informacion: '#4dfff3',
 
     //Gradientes
-    gradientePrimario: ['#007bff', '#00d4ff'],
+    gradientePrimario: ['#1e3a86', '#114b57'],
     gradienteSecundario: ['#ff7f50', '#ff6347'],
 
 

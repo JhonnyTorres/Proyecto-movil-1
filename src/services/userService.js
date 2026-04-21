@@ -17,7 +17,7 @@ export const updateUserProfilePhoto = async (userId, photoURL) => {
         }
 
 
-        const userRef = doc(db, 'users', userId);
+        const userRef = doc(db, 'usuarios', userId);
         await setDoc(userRef, {
             photoURL: photoURL,
             updatedAt: new Date().toISOString()
@@ -36,7 +36,7 @@ export const getUserData = async (userId) => {
     if (!userId) return null;
 
     try {
-        const userRef = doc(db, 'users', userId);
+        const userRef = doc(db, 'usuarios', userId);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {

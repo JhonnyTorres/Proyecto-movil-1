@@ -1,23 +1,38 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { auth, onAuthStateChanged, signOut } from "../src/services/firebaseService";
+import { doc, getDoc } from "firebase/firestore";
+import { auth, db, onAuthStateChanged, signOut } from "../src/services/firebaseService";
 
 export const AuthContext = createContext();
 
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (!context) {
-        throw new Error('Acá va un mensaje epecifico de error en torno al contexto')
+        throw new Error('useAuth debe usarse dentro de un AuthProvider');
     }
     return context;
 };
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const [rol, setRol] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setUser(user);
+        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+            setUser(firebaseUser);
+
+            if (firebaseUser) {
+                try {
+                    const snap = await getDoc(doc(db, 'usuarios', firebaseUser.uid));
+                    setRol(snap.exists() ? snap.data().rol : null);
+                } catch (error) {
+                    console.error('Error al obtener el rol del usuario:', error);
+                    setRol(null);
+                }
+            } else {
+                setRol(null);
+            }
+
             setLoading(false);
         });
 
@@ -28,6 +43,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await signOut(auth);
             setUser(null);
+            setRol(null);
         } catch (error) {
             console.error('Error al cerrar sesión:', error);
         }
@@ -35,6 +51,7 @@ export const AuthProvider = ({ children }) => {
 
     const value = {
         user,
+        rol,
         setUser,
         logout,
         loading,
@@ -47,4 +64,3 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-

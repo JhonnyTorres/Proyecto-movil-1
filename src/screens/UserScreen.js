@@ -1,17 +1,20 @@
-import { use, useCallback, useState } from "react";
+import { useState, useCallback } from "react";
 import colors from "../constants/colors";
-import { View, Text, Alert, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, Alert, Image, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { ScrollView } from "react-native/types_generated/index";
+import { pickImage, uploadImageToCloudinary } from "../services/cloudinaryService";
+import { getUserData, updateUserProfilePhoto } from "../services/userService";
+import { ScrollView } from "react-native-gesture-handler";
+import { useAuth } from "../../navigation/AuthContext";
 
 const UserScreen = ({ navigation }) => {
     const { user } = useAuth();
-    const { imageUri, setImageUri } = useState(null);
-    const { userData, setUserData } = useState(null);
-    const { loading, setLoading } = useState(false);
-    const { selectedImage, setSelectedImage } = useState(null);
-    const { showPreview, setShowPreview } = useState(false);
-    const defaultImage = ''; //Url imagen por defecto
+    const [imageUri, setImageUri] = useState(null);
+    const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [showPreview, setShowPreview] = useState(false);
+    const defaultImage = '';
 
     const fetchUserProfile = useCallback(async () => {
         if (user) {
@@ -35,7 +38,7 @@ const UserScreen = ({ navigation }) => {
         }, [fetchUserProfile])
     );
 
-    const handlerImageSelection = async () => {
+    const handleImageSelection = async () => {
         try {
             const imageAsset = await pickImage();
             if (imageAsset) {
@@ -44,16 +47,16 @@ const UserScreen = ({ navigation }) => {
             }
         } catch (error) {
             console.error("Error al seleccionar la imagen: ", error);
-            Alert.alert('Error', 'No se pudo seleccionar la imagen.')
+            Alert.alert('Error 😵‍💫', 'No se pudo seleccionar la imagen');
         }
     };
 
-    const handlerCancelSelection = () => {
+    const handleCancelSelection = () => {
         setSelectedImage(null);
         setShowPreview(false);
     };
 
-    const handlerConfirmUpload = async () => {
+    const handleConfirmUpload = async () => {
         if (!selectedImage) return;
         try {
             setLoading(true);
@@ -62,14 +65,12 @@ const UserScreen = ({ navigation }) => {
             const imageUrl = await uploadImageToCloudinary(selectedImage.uri);
             await updateUserProfilePhoto(user.uid, imageUrl);
 
-            setImageUri(imageUri);
-
+            setImageUri(imageUrl);
             setSelectedImage(null);
-            Alert.alert('Ëxito', '¡Subida de imagen con éxito!');
-
+            Alert.alert('Éxito', 'Imagen de perfil actualizada satisfactoriamente!');
         } catch (error) {
-            console.error("Error con la carga de la imagen", error);
-            Alert.alert('Error', 'Error al cargar la imagen');
+            console.error('Error al cargar la imagen: ', error);
+            Alert.alert('Error 😵‍💫', 'Imagen de perfil no se pudo actualizar');
         } finally {
             setLoading(false);
         }
@@ -78,12 +79,12 @@ const UserScreen = ({ navigation }) => {
     return (
         <ScrollView>
             <View style={styles.container}>
-                <Text>User Screen</Text>
+
                 <View>
                     <Image source={{ uri: imageUri }} resizeMode="cover" />
-                    <TouchableOpacity onPress={handlerImageSelection} disabled={loading}>
+                    <TouchableOpacity onPress={handleImageSelection} disabled={loading}>
                         {loading ? (
-                            <ActivityIndicator color="" size="snall" />
+                            <ActivityIndicator color="" size="small" />
                         ) : (
                             <Text>Cambiar Foto</Text>
                         )}
@@ -98,13 +99,24 @@ const UserScreen = ({ navigation }) => {
     );
 };
 
-const styles = {
+const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: colors.principal,
-    }
-};
+    },
+    userInfo: {
+        marginTop: 20,
+        alignItems: 'center',
+    },
+    userName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    userEmail: {
+        fontSize: 14,
+    },
+});
 
 export default UserScreen;

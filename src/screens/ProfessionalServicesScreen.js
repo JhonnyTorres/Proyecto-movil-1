@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../navigation/AuthContext";
 import { db } from "../services/firebaseService";
 import colors from "../constants/colors";
+import { LinearGradient } from "expo-linear-gradient";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -261,7 +262,7 @@ const ProfessionalServicesScreen = () => {
     }
 
     return (
-        <View style={styles.container}>
+        <LinearGradient colors={colors.gradientePrimario} style={styles.container}>
             {/* Encabezado */}
             <View style={styles.header}>
                 <View>
@@ -324,25 +325,25 @@ const ProfessionalServicesScreen = () => {
                     showsVerticalScrollIndicator={false}
                 />
             )}
-        </View>
+        </LinearGradient>
     );
 };
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f5f5f5' },
-    centered: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
-    emptyText: { fontSize: 15, color: '#aaa', textAlign: 'center', paddingHorizontal: 32 },
+    container: { flex: 1 },
+    centered: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12, paddingHorizontal: 24 },
+    emptyText: { fontSize: 15, color: 'rgba(255,255,255,0.6)', textAlign: 'center', paddingHorizontal: 32 },
 
     header: {
-        backgroundColor: '#fff', paddingHorizontal: 20,
+        backgroundColor: 'rgba(255,255,255,0.10)', paddingHorizontal: 20,
         paddingTop: 20, paddingBottom: 12,
-        borderBottomWidth: 0.5, borderBottomColor: '#e0e0e0',
+        borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.18)',
         flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     },
-    headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#111' },
-    headerSub: { fontSize: 13, color: '#888', marginTop: 2 },
+    headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+    headerSub: { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
     badgePendientes: {
         backgroundColor: '#E24B4A', paddingHorizontal: 12,
         paddingVertical: 6, borderRadius: 20,
@@ -352,17 +353,18 @@ const styles = StyleSheet.create({
     filtrosContainer: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
     filtroChip: {
         paddingHorizontal: 16, paddingVertical: 7,
-        borderRadius: 20, borderWidth: 1, borderColor: '#ddd', backgroundColor: '#fff',
+        borderRadius: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)', backgroundColor: 'rgba(255,255,255,0.08)',
     },
-    filtroChipActive: { backgroundColor: '#185FA5', borderColor: '#185FA5' },
-    filtroText: { fontSize: 13, color: '#666' },
-    filtroTextActive: { color: '#fff', fontWeight: '600' },
+    filtroChipActive: { backgroundColor: '#fff', borderColor: '#fff' },
+    filtroText: { fontSize: 13, color: 'rgba(255,255,255,0.7)' },
+    filtroTextActive: { color: '#1e3a86', fontWeight: '600' },
 
-    list: { padding: 16, gap: 12 },
+    list: { padding: 0, gap: 0, paddingBottom: 24 },
 
     card: {
-        backgroundColor: '#fff', borderRadius: 14,
-        padding: 16, borderWidth: 0.5, borderColor: '#e0e0e0',
+        backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 14,
+        padding: 16, borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.3)', marginHorizontal: 16,
+        marginBottom: 12,
     },
     cardHeader: {
         flexDirection: 'row', justifyContent: 'space-between',

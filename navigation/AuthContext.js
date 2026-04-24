@@ -17,27 +17,44 @@ export const AuthProvider = ({ children }) => {
     const [rol, setRol] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-            setUser(firebaseUser);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
+            try {
+                // Validacion del usuario
+                await firebaseUser.reload();
 
-            if (firebaseUser) {
-                try {
-                    const snap = await getDoc(doc(db, 'usuarios', firebaseUser.uid));
-                    setRol(snap.exists() ? snap.data().rol : null);
-                } catch (error) {
-                    console.error('Error al obtener el rol del usuario:', error);
+                setUser(firebaseUser);
+
+                const snap = await getDoc(doc(db, 'usuarios', firebaseUser.uid));
+
+                if (snap.exists()) {
+                    setRol(snap.data().rol);
+                } else {
+                    // 🔥 Usuario no existe en Firestore
+                    await signOut(auth);
+                    setUser(null);
                     setRol(null);
                 }
-            } else {
+
+            } catch (error) {
+                // 🔥 Usuario eliminado de Firebase Auth
+                console.log("Usuario ya no existe:", error);
+
+                await signOut(auth);
+                setUser(null);
                 setRol(null);
             }
+        } else {
+            setUser(null);
+            setRol(null);
+        }
 
-            setLoading(false);
-        });
+        setLoading(false);
+    });
 
-        return unsubscribe;
-    }, []);
+    return unsubscribe;
+}, []);
 
     const logout = async () => {
         try {

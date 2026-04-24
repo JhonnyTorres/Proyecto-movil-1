@@ -11,6 +11,8 @@ import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "../../navigation/AuthContext";
 import { db } from "../services/firebaseService";
 import colors from "../constants/colors";
+import { LinearGradient } from "expo-linear-gradient";
+
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
@@ -76,11 +78,12 @@ const HomeCliente = ({ user }) => {
     const activos = servicios.filter(s => s.estado === 'en_proceso' || s.estado === 'pendiente');
 
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <View style={styles.headerSection}>
-                <Text style={styles.greeting}>¡Hola, {nombre}! 👋</Text>
-                <Text style={styles.greetingSub}>¿Qué necesitas hoy?</Text>
-            </View>
+        <LinearGradient colors={colors.gradientePrimario} style={{ flex: 1 }}>
+            <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+                <View style={styles.headerSection}>
+                    <Text style={styles.greeting}>¡Hola, {nombre}! 👋</Text>
+                    <Text style={styles.greetingSub}>¿Qué necesitas hoy?</Text>
+                </View>
 
             {loading ? (
                 <ActivityIndicator color={colors.variante5} style={{ marginVertical: 16 }} />
@@ -146,7 +149,8 @@ const HomeCliente = ({ user }) => {
             )}
 
             <View style={{ height: 24 }} />
-        </ScrollView>
+            </ScrollView>
+        </LinearGradient>
     );
 };
 
@@ -184,11 +188,12 @@ const HomeProfesional = ({ user, userData }) => {
         .sort((a, b) => (b.creadoEn?.toDate?.() || 0) - (a.creadoEn?.toDate?.() || 0))[0];
 
     return (
-        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <View style={styles.headerSection}>
-                <Text style={styles.greeting}>¡Hola, {nombre}! 👋</Text>
-                <Text style={styles.greetingSub}>Aquí está tu resumen de hoy</Text>
-            </View>
+        <LinearGradient colors={colors.gradientePrimario} style={{ flex: 1 }}>
+            <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+                <View style={styles.headerSection}>
+                    <Text style={styles.greeting}>¡Hola, {nombre}! 👋</Text>
+                    <Text style={styles.greetingSub}>Aquí está tu resumen de hoy</Text>
+                </View>
 
             {loading ? (
                 <ActivityIndicator color={colors.variante5} style={{ marginVertical: 16 }} />
@@ -277,7 +282,8 @@ const HomeProfesional = ({ user, userData }) => {
             )}
 
             <View style={{ height: 24 }} />
-        </ScrollView>
+            </ScrollView>
+        </LinearGradient>
     );
 };
 
@@ -313,31 +319,31 @@ const HomeScreen = () => {
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f5f5f5' },
+    container: { flex: 1, backgroundColor: 'transparent' },
     centered: { flex: 1, justifyContent: 'center', alignItems: 'center' },
 
     headerSection: {
-        backgroundColor: '#fff', padding: 20,
+        backgroundColor: 'rgba(255,255,255,0.10)', padding: 20,
         paddingTop: 24, borderBottomWidth: 0.5,
-        borderBottomColor: '#e0e0e0', marginBottom: 16,
+        borderBottomColor: 'rgba(255,255,255,0.18)', marginBottom: 16,
     },
-    greeting: { fontSize: 22, fontWeight: 'bold', color: '#111' },
-    greetingSub: { fontSize: 14, color: '#888', marginTop: 4 },
+    greeting: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+    greetingSub: { fontSize: 14, color: 'rgba(255,255,255,0.6)', marginTop: 4 },
 
     metricsRow: {
         flexDirection: 'row', gap: 10,
         paddingHorizontal: 16, marginBottom: 20,
     },
     metric: {
-        flex: 1, backgroundColor: '#fff',
+        flex: 1, backgroundColor: 'rgba(255,255,255,0.95)',
         borderRadius: 12, padding: 12,
-        borderWidth: 0.5, borderColor: '#e0e0e0',
+        borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.3)',
     },
-    metricLabel: { fontSize: 12, color: '#888' },
+    metricLabel: { fontSize: 12, color: '#666' },
     metricValue: { fontSize: 26, fontWeight: '700', marginTop: 4 },
 
     sectionTitle: {
-        fontSize: 15, fontWeight: '600', color: '#111',
+        fontSize: 15, fontWeight: '600', color: '#fff',
         paddingHorizontal: 16, marginBottom: 10,
     },
 
@@ -347,17 +353,17 @@ const styles = StyleSheet.create({
     },
     categoriaChip: {
         flexDirection: 'row', alignItems: 'center', gap: 8,
-        backgroundColor: '#fff', borderRadius: 12,
-        borderWidth: 0.5, borderColor: '#e0e0e0',
+        backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 12,
+        borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.3)',
         paddingHorizontal: 14, paddingVertical: 10,
         width: '47%',
     },
     categoriaLabel: { fontSize: 13, color: '#111' },
 
     card: {
-        backgroundColor: '#fff', borderRadius: 14,
+        backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 14,
         padding: 16, marginHorizontal: 16,
-        marginBottom: 12, borderWidth: 0.5, borderColor: '#e0e0e0',
+        marginBottom: 12, borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.3)',
     },
     cardPendiente: { borderColor: '#FAC775' },
     cardRow: {

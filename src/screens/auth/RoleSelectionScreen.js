@@ -1,87 +1,50 @@
 import { useState } from "react";
 import {
-    View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert
+    StyleSheet, View, Text, TouchableOpacity,
+    ActivityIndicator, Alert
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../../services/firebaseService";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
 import colors from "../../constants/colors";
 
 const ROLES = [
-    {
-        id: 'cliente',
-        label: 'Cliente',
-        description: 'Busco servicios para mi hogar',
-        icon: 'home-outline',
-    },
-    {
-        id: 'profesional',
-        label: 'Profesional',
-        description: 'Ofrezco servicios del hogar',
-        icon: 'construct-outline',
-    },
+    { id: 'cliente', label: 'Cliente', desc: 'Busco servicios para mi hogar', icon: 'home-outline' },
+    { id: 'profesional', label: 'Profesional', desc: 'Ofrezco servicios del hogar', icon: 'construct-outline' },
 ];
 
 const RoleSelectionScreen = () => {
-    const [selectedRole, setSelectedRole] = useState(null);
+    const [rolSeleccionado, setRolSeleccionado] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
     const route = useRoute();
-    const { name, email, password } = route.params;
+    const { name, email, password } = route.params || {};
 
     const handleContinue = async () => {
-        if (!selectedRole) {
-            Alert.alert('Selecciona un rol', 'Por favor elige si eres Cliente o Profesional.');
+        if (!rolSeleccionado) {
+            Alert.alert('Selecciona un rol', 'Elige si eres cliente o profesional.');
             return;
         }
-
-        // Si es profesional, navegar a la pantalla de perfil profesional
-        if (selectedRole === 'profesional') {
+        if (rolSeleccionado === 'profesional') {
             navigation.navigate('ProfessionalProfile', { name, email, password });
             return;
         }
-
-        // Si es cliente, crear el usuario directamente
         setLoading(true);
         try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-
-            await updateProfile(user, { displayName: name });
-
-            await setDoc(doc(db, 'usuarios', user.uid), {
-                uid: user.uid,
-                nombre: name,
-                email: email,
-                rol: 'cliente',
+            const credential = await createUserWithEmailAndPassword(auth, email, password);
+            const uid = credential.user.uid;
+            await updateProfile(credential.user, { displayName: name });
+            await setDoc(doc(db, 'usuarios', uid), {
+                nombre: name, email, rol: 'cliente',
                 creadoEn: serverTimestamp(),
             });
-
-            Alert.alert('¡Registro exitoso!', 'Tu cuenta ha sido creada.');
-            // El AuthContext detecta el usuario y redirige automáticamente
-
-        } catch (error) {
-            let errorMessage = 'Error al registrar usuario';
-            switch (error.code) {
-                case 'auth/email-already-in-use':
-                    errorMessage = 'Ya existe una cuenta con este correo electrónico';
-                    break;
-                case 'auth/invalid-email':
-                    errorMessage = 'El formato del correo electrónico no es válido';
-                    break;
-                case 'auth/weak-password':
-                    errorMessage = 'La contraseña es muy débil';
-                    break;
-                case 'auth/network-request-failed':
-                    errorMessage = 'Error de conexión. Verifica tu internet';
-                    break;
-                default:
-                    errorMessage = `${error.message || 'Error desconocido'} (Código: ${error.code})`;
-            }
-            Alert.alert('Error', errorMessage);
+        } catch (e) {
+            let msg = 'Error al crear la cuenta';
+            if (e.code === 'auth/email-already-in-use') msg = 'Este correo ya tiene una cuenta';
+            Alert.alert('Error', msg);
         } finally {
             setLoading(false);
         }
@@ -89,210 +52,132 @@ const RoleSelectionScreen = () => {
 
     return (
         <LinearGradient colors={colors.gradientePrimario} style={styles.container}>
-            <View style={styles.formContainer}>
-
+            <View style={styles.inner}>
+                <View style={styles.logoCircle}>
+                    <Ionicons name="people-outline" size={28} color="#fff" />
+                </View>
                 <Text style={styles.title}>¿Cómo usarás la app?</Text>
                 <Text style={styles.subtitle}>Elige tu rol para continuar</Text>
 
-                {ROLES.map((role) => {
-                    const isSelected = selectedRole === role.id;
-                    return (
-                        <TouchableOpacity
-                            key={role.id}
-                            style={[styles.card, isSelected && styles.cardSelected]}
-                            onPress={() => setSelectedRole(role.id)}
-                            activeOpacity={0.8}
-                        >
-                            <View style={[styles.iconCircle, isSelected && styles.iconCircleSelected]}>
-                                <Ionicons
-                                    name={role.icon}
-                                    size={26}
-                                    color={isSelected ? colors.iluminado : colors.suave}
-                                />
-                            </View>
+                <View style={styles.card}>
+                    {ROLES.map(r => {
+                        const selected = rolSeleccionado === r.id;
+                        return (
+                            <TouchableOpacity
+                                key={r.id}
+                                style={[styles.roleCard, selected && styles.roleCardSelected]}
+                                onPress={() => setRolSeleccionado(r.id)}
+                                activeOpacity={0.85}
+                            >
+                                <View style={[styles.roleIcon, selected && styles.roleIconSelected]}>
+                                    <Ionicons
+                                        name={r.icon} size={22}
+                                        color={selected ? '#1e3a86' : 'rgba(255,255,255,0.8)'}
+                                    />
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={styles.roleLabel}>{r.label}</Text>
+                                    <Text style={styles.roleDesc}>{r.desc}</Text>
+                                </View>
+                                <View style={[styles.dot, selected && styles.dotSelected]}>
+                                    {selected && <View style={styles.dotInner} />}
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    })}
 
-                            <View style={styles.cardText}>
-                                <Text style={[styles.roleLabel, isSelected && styles.roleLabelSelected]}>
-                                    {role.label}
-                                </Text>
-                                <Text style={[styles.roleDesc, isSelected && styles.roleDescSelected]}>
-                                    {role.description}
-                                </Text>
-                            </View>
+                    {rolSeleccionado === 'profesional' && (
+                        <View style={styles.infoBox}>
+                            <Ionicons name="information-circle-outline" size={16} color="rgba(255,255,255,0.7)" />
+                            <Text style={styles.infoText}>
+                                En el siguiente paso podrás configurar tus servicios y experiencia.
+                            </Text>
+                        </View>
+                    )}
 
-                            <View style={[styles.radio, isSelected && styles.radioSelected]}>
-                                {isSelected && <View style={styles.radioDot} />}
-                            </View>
-                        </TouchableOpacity>
-                    );
-                })}
+                    <TouchableOpacity
+                        style={[styles.btnPrimary, (!rolSeleccionado || loading) && { opacity: 0.6 }]}
+                        onPress={handleContinue}
+                        disabled={!rolSeleccionado || loading}
+                        activeOpacity={0.85}
+                    >
+                        {loading
+                            ? <ActivityIndicator color="#1e3a86" />
+                            : <Text style={styles.btnPrimaryText}>
+                                {rolSeleccionado === 'profesional' ? 'Continuar →' : 'Registrarse'}
+                            </Text>
+                        }
+                    </TouchableOpacity>
 
-                {/* Indicador de paso extra para profesional */}
-                {selectedRole === 'profesional' && (
-                    <View style={styles.infoBox}>
-                        <Ionicons name="information-circle-outline" size={16} color={colors.iluminado} />
-                        <Text style={styles.infoText}>
-                            En el siguiente paso podrás configurar tus servicios y experiencia.
-                        </Text>
-                    </View>
-                )}
-
-                <TouchableOpacity
-                    style={[styles.registerButton, (!selectedRole || loading) && styles.buttonDisabled]}
-                    onPress={handleContinue}
-                    disabled={!selectedRole || loading}
-                >
-                    {loading
-                        ? <ActivityIndicator color={colors.iluminado} />
-                        : <Text style={styles.buttonText}>
-                            {selectedRole === 'profesional' ? 'Continuar →' : 'Registrarse'}
-                        </Text>
-                    }
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.goBack()}>
-                    <Text style={styles.linkText}>← Volver</Text>
-                </TouchableOpacity>
-
+                    <TouchableOpacity style={styles.btnBack} onPress={() => navigation.goBack()}>
+                        <Ionicons name="arrow-back-outline" size={16} color="rgba(255,255,255,0.5)" />
+                        <Text style={styles.btnBackText}>Volver</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+    container: { flex: 1 },
+    inner: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 },
+
+    logoCircle: {
+        width: 64, height: 64, borderRadius: 32,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)',
+        alignItems: 'center', justifyContent: 'center', marginBottom: 12,
     },
-    formContainer: {
-        width: '90%',
-        maxWidth: 400,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderRadius: 20,
-        padding: 30,
-        alignItems: 'center',
-    },
-    title: {
-        fontSize: 26,
-        fontWeight: 'bold',
-        color: colors.iluminado,
-        marginBottom: 8,
-        textAlign: 'center',
-    },
-    subtitle: {
-        fontSize: 15,
-        color: colors.suave,
-        marginBottom: 28,
-        textAlign: 'center',
-    },
+    title: { fontSize: 24, fontWeight: '800', color: '#fff', textAlign: 'center' },
+    subtitle: { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 4, marginBottom: 28, textAlign: 'center' },
+
     card: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.15)',
-        borderRadius: 14,
-        borderWidth: 1.5,
-        borderColor: 'transparent',
-        padding: 16,
-        marginBottom: 14,
-        width: '100%',
-        gap: 14,
+        width: '100%', maxWidth: 400,
+        backgroundColor: 'rgba(255,255,255,0.10)',
+        borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)',
+        borderRadius: 24, padding: 20,
     },
-    cardSelected: {
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
-        borderColor: colors.iluminado,
+
+    roleCard: {
+        flexDirection: 'row', alignItems: 'center', gap: 14,
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.15)',
+        borderRadius: 14, padding: 14, marginBottom: 10,
     },
-    iconCircle: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        alignItems: 'center',
-        justifyContent: 'center',
+    roleCardSelected: { backgroundColor: 'rgba(255,255,255,0.18)', borderColor: 'rgba(255,255,255,0.6)' },
+    roleIcon: {
+        width: 42, height: 42, borderRadius: 12,
+        backgroundColor: 'rgba(255,255,255,0.12)',
+        alignItems: 'center', justifyContent: 'center',
     },
-    iconCircleSelected: {
-        backgroundColor: colors.variante5,
+    roleIconSelected: { backgroundColor: '#fff' },
+    roleLabel: { fontSize: 15, fontWeight: '700', color: '#fff' },
+    roleDesc: { fontSize: 12, color: 'rgba(255,255,255,0.55)', marginTop: 2 },
+    dot: {
+        width: 20, height: 20, borderRadius: 10,
+        borderWidth: 2, borderColor: 'rgba(255,255,255,0.4)',
+        alignItems: 'center', justifyContent: 'center',
     },
-    cardText: {
-        flex: 1,
-    },
-    roleLabel: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: colors.suave,
-    },
-    roleLabelSelected: {
-        color: colors.iluminado,
-    },
-    roleDesc: {
-        fontSize: 13,
-        color: colors.suave,
-        marginTop: 2,
-        opacity: 0.8,
-    },
-    roleDescSelected: {
-        color: colors.iluminado,
-        opacity: 0.9,
-    },
-    radio: {
-        width: 22,
-        height: 22,
-        borderRadius: 11,
-        borderWidth: 1.5,
-        borderColor: colors.suave,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    radioSelected: {
-        borderColor: colors.iluminado,
-        backgroundColor: colors.variante5,
-    },
-    radioDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        backgroundColor: colors.iluminado,
-    },
+    dotSelected: { borderColor: '#fff' },
+    dotInner: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#fff' },
+
     infoBox: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        borderRadius: 10,
-        padding: 12,
-        width: '100%',
-        marginBottom: 10,
+        flexDirection: 'row', alignItems: 'flex-start', gap: 8,
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        borderRadius: 12, padding: 12, marginBottom: 12,
     },
-    infoText: {
-        flex: 1,
-        fontSize: 13,
-        color: colors.iluminado,
-        lineHeight: 18,
+    infoText: { flex: 1, fontSize: 12, color: 'rgba(255,255,255,0.65)', lineHeight: 18 },
+
+    btnPrimary: {
+        backgroundColor: '#fff', borderRadius: 12,
+        paddingVertical: 14, alignItems: 'center',
+        marginTop: 4, marginBottom: 12,
     },
-    registerButton: {
-        backgroundColor: colors.variante5,
-        paddingVertical: 15,
-        paddingHorizontal: 40,
-        borderRadius: 10,
-        marginTop: 10,
-        marginBottom: 15,
-        width: '100%',
-        alignItems: 'center',
-    },
-    buttonDisabled: {
-        opacity: 0.5,
-    },
-    buttonText: {
-        color: colors.iluminado,
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    linkText: {
-        color: colors.iluminado,
-        fontSize: 15,
-        textDecorationLine: 'underline',
-        marginTop: 4,
-    },
+    btnPrimaryText: { fontSize: 15, fontWeight: '700', color: '#1e3a86' },
+
+    btnBack: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+    btnBackText: { fontSize: 13, color: 'rgba(255,255,255,0.5)' },
 });
 
 export default RoleSelectionScreen;

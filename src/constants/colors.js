@@ -16,8 +16,9 @@ export default {
     oscuro: '#000000',
 
     //Colores para los background o fondos
-    fondloClaro: '#f5f5f5',
-    fondloOscuro: '#380202',
+    fondoClaro: '#f5f7fa',
+    fondoOscuro: '#380202',
+    fondoHeader: ['#1e3a86', '#114b57'],
 
     //colores de alertas y acciones
     alerta: '#ff4d4d',
@@ -28,7 +29,4 @@ export default {
     //Gradientes
     gradientePrimario: ['#1e3a86', '#114b57'],
     gradienteSecundario: ['#ff7f50', '#ff6347'],
-
-
-
 }

@@ -1,178 +1,208 @@
-import colors from "../../constants/colors";
 import { useState } from "react";
-import { StyleSheet, TextInput, TouchableOpacity, View, Text, Alert } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
+import {
+    StyleSheet, TextInput, View, Text,
+    TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from '@expo/vector-icons';
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../services/firebaseService";
+import { LinearGradient } from "expo-linear-gradient";
+import { Ionicons } from "@expo/vector-icons";
+import colors from "../../constants/colors";
 
 const LoginScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPass, setShowPass] = useState(false);
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigation = useNavigation();
-
-        // Verificar que auth está definido
-    console.log('Auth en Login:', auth);
 
     const handleLogin = async () => {
         if (!email || !password) {
-            setError('Por favor completa todos los campos');
+            setError('Completa todos los campos');
             return;
         }
-
         setError('');
-        
+        setLoading(true);
         try {
-            const userCredential = await signInWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            
-            Alert.alert('Éxito', 'Inicio de sesión exitoso', [
-                { text: 'OK', onPress: () => navigation.reset({
-                    index: 0,
-                    routes: [{ name: 'Main' }],
-                }) }
-            ]);
-        } catch (error) {
-            console.error('Error al iniciar sesión:', error);
-            
-            let errorMessage = 'Error al iniciar sesión';
-            
-            switch (error.code) {
+            await signInWithEmailAndPassword(auth, email.trim(), password);
+        } catch (e) {
+            switch (e.code) {
                 case 'auth/user-not-found':
-                    errorMessage = 'No existe una cuenta con este correo electrónico';
-                    break;
                 case 'auth/wrong-password':
-                    errorMessage = 'Contraseña incorrecta';
-                    break;
+                case 'auth/invalid-credential':
+                    setError('Correo o contraseña incorrectos'); break;
                 case 'auth/invalid-email':
-                    errorMessage = 'El formato del correo electrónico no es válido';
-                    break;
-                case 'auth/user-disabled':
-                    errorMessage = 'Esta cuenta ha sido deshabilitada';
-                    break;
+                    setError('El correo no tiene un formato válido'); break;
                 case 'auth/too-many-requests':
-                    errorMessage = 'Demasiados intentos fallidos. Intenta más tarde';
-                    break;
-                case 'auth/network-request-failed':
-                    errorMessage = 'Error de conexión. Verifica tu internet';
-                    break;
+                    setError('Demasiados intentos. Intenta más tarde'); break;
                 default:
-                    errorMessage = error.message || 'Error desconocido';
+                    setError('Error al iniciar sesión. Intenta de nuevo');
             }
-            
-            setError(errorMessage);
+        } finally {
+            setLoading(false);
         }
     };
 
     return (
         <LinearGradient colors={colors.gradientePrimario} style={styles.container}>
-            <View style={styles.formContainer}>
-                <Text style={styles.title}>Iniciar Sesión</Text>
-                
-                <View style={styles.inputContainer}>
-                    <Ionicons name="mail-outline" size={24} color={colors.iluminado} />
-                    <TextInput 
-                        style={styles.input} 
-                        placeholder="Correo electrónico" 
-                        placeholderTextColor={colors.suave}
-                        value={email} 
-                        onChangeText={setEmail} 
-                        keyboardType="email-address" 
-                        autoCapitalize="none" 
-                    />
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.inner}
+            >
+                {/* Logo */}
+                <View style={styles.logoCircle}>
+                    <Ionicons name="home" size={28} color="#fff" />
                 </View>
+                <Text style={styles.appName}>ServiHogar</Text>
+                <Text style={styles.appSub}>Servicios para el hogar</Text>
 
-                <View style={styles.inputContainer}>
-                    <Ionicons name="lock-closed-outline" size={24} color={colors.iluminado} />
-                    <TextInput 
-                        style={styles.input} 
-                        placeholder="Contraseña" 
-                        placeholderTextColor={colors.suave}
-                        value={password} 
-                        onChangeText={setPassword} 
-                        secureTextEntry 
-                        autoCapitalize="none" 
-                    />
+                {/* Card */}
+                <View style={styles.card}>
+                    <Text style={styles.cardTitle}>Iniciar sesión</Text>
+                    <Text style={styles.cardSub}>Bienvenido de nuevo</Text>
+
+                    {/* Email */}
+                    <View style={[styles.inputWrap, error && styles.inputError]}>
+                        <Ionicons name="mail-outline" size={18} color="rgba(255,255,255,0.6)" />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Correo electrónico"
+                            placeholderTextColor="rgba(255,255,255,0.45)"
+                            value={email}
+                            onChangeText={t => { setEmail(t); setError(''); }}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoCorrect={false}
+                        />
+                    </View>
+
+                    {/* Contraseña */}
+                    <View style={[styles.inputWrap, error && styles.inputError]}>
+                        <Ionicons name="lock-closed-outline" size={18} color="rgba(255,255,255,0.6)" />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Contraseña"
+                            placeholderTextColor="rgba(255,255,255,0.45)"
+                            value={password}
+                            onChangeText={t => { setPassword(t); setError(''); }}
+                            secureTextEntry={!showPass}
+                            autoCapitalize="none"
+                        />
+                        <TouchableOpacity onPress={() => setShowPass(v => !v)}>
+                            <Ionicons
+                                name={showPass ? 'eye-off-outline' : 'eye-outline'}
+                                size={18}
+                                color="rgba(255,255,255,0.5)"
+                            />
+                        </TouchableOpacity>
+                    </View>
+
+                    {error ? (
+                        <View style={styles.errorBox}>
+                            <Ionicons name="alert-circle-outline" size={14} color="#ff6b6b" />
+                            <Text style={styles.errorText}>{error}</Text>
+                        </View>
+                    ) : null}
+
+                    <TouchableOpacity
+                        style={[styles.btnPrimary, loading && { opacity: 0.7 }]}
+                        onPress={handleLogin}
+                        disabled={loading}
+                        activeOpacity={0.85}
+                    >
+                        {loading
+                            ? <ActivityIndicator color="#1e3a86" />
+                            : <Text style={styles.btnPrimaryText}>Iniciar sesión</Text>
+                        }
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={styles.btnLink}
+                        onPress={() => navigation.navigate('Register')}
+                    >
+                        <Text style={styles.btnLinkText}>
+                            ¿No tienes cuenta?{' '}
+                            <Text style={styles.btnLinkHighlight}>Regístrate</Text>
+                        </Text>
+                    </TouchableOpacity>
                 </View>
-
-                {error ? <Text style={styles.errorText}>{error}</Text> : null}
-
-                <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-                    <Text style={styles.buttonText}>Iniciar Sesión</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                    <Text style={styles.linkText}>¿No tienes cuenta? Regístrate</Text>
-                </TouchableOpacity>
-            </View>
+            </KeyboardAvoidingView>
         </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+    container: { flex: 1 },
+    inner: {
+        flex: 1, justifyContent: 'center',
+        alignItems: 'center', paddingHorizontal: 24,
     },
-    formContainer: {
-        width: '90%',
-        maxWidth: 400,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        borderRadius: 20,
-        padding: 30,
-        alignItems: 'center',
+
+    logoCircle: {
+        width: 64, height: 64, borderRadius: 32,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        borderWidth: 1, borderColor: 'rgba(255,255,255,0.25)',
+        alignItems: 'center', justifyContent: 'center',
+        marginBottom: 12,
     },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: colors.iluminado,
-        marginBottom: 30,
+    appName: {
+        fontSize: 26, fontWeight: '800',
+        color: '#fff', letterSpacing: 0.5,
     },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(255, 255, 255, 0.2)',
-        borderRadius: 10,
-        marginBottom: 15,
-        paddingHorizontal: 15,
-        width: '100%',
+    appSub: {
+        fontSize: 13, color: 'rgba(255,255,255,0.6)',
+        marginTop: 4, marginBottom: 28, textAlign: 'center', width: '100%'
     },
+
+    card: {
+        width: '100%', maxWidth: 400,
+        backgroundColor: 'rgba(255,255,255,0.10)',
+        borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)',
+        borderRadius: 24, padding: 24,
+    },
+    cardTitle: {
+        fontSize: 22, fontWeight: '700',
+        color: '#fff', marginBottom: 4,
+    },
+    cardSub: {
+        fontSize: 13, color: 'rgba(255,255,255,0.55)',
+        marginBottom: 20,
+    },
+
+    inputWrap: {
+        flexDirection: 'row', alignItems: 'center', gap: 10,
+        backgroundColor: 'rgba(255,255,255,0.12)',
+        borderWidth: 1, borderColor: 'rgba(255,255,255,0.18)',
+        borderRadius: 12, paddingHorizontal: 14, paddingVertical: 13,
+        marginBottom: 12,
+    },
+    inputError: { borderColor: 'rgba(255,107,107,0.6)' },
     input: {
-        flex: 1,
-        paddingVertical: 15,
-        paddingHorizontal: 10,
-        color: colors.iluminado,
-        fontSize: 16,
+        flex: 1, fontSize: 14,
+        color: '#fff',
     },
-    loginButton: {
-        backgroundColor: colors.variante5,
-        paddingVertical: 15,
-        paddingHorizontal: 40,
-        borderRadius: 10,
-        marginTop: 20,
-        marginBottom: 15,
-        width: '100%',
-        alignItems: 'center',
+
+    errorBox: {
+        flexDirection: 'row', alignItems: 'center', gap: 6,
+        backgroundColor: 'rgba(255,107,107,0.12)',
+        borderRadius: 8, padding: 10, marginBottom: 12,
     },
-    buttonText: {
-        color: colors.iluminado,
-        fontSize: 18,
-        fontWeight: 'bold',
+    errorText: { fontSize: 13, color: '#ff6b6b', flex: 1 },
+
+    btnPrimary: {
+        backgroundColor: '#fff', borderRadius: 12,
+        paddingVertical: 14, alignItems: 'center',
+        marginTop: 4, marginBottom: 16,
     },
-    linkText: {
-        color: colors.iluminado,
-        fontSize: 16,
-        textDecorationLine: 'underline',
+    btnPrimaryText: {
+        fontSize: 15, fontWeight: '700', color: '#1e3a86',
     },
-    errorText: {
-        color: colors.alerta,
-        fontSize: 14,
-        marginBottom: 10,
-        textAlign: 'center',
-    },
+
+    btnLink: { alignItems: 'center' },
+    btnLinkText: { fontSize: 13, color: 'rgba(255,255,255,0.6)' },
+    btnLinkHighlight: { color: '#fff', fontWeight: '600' },
 });
 
 export default LoginScreen;

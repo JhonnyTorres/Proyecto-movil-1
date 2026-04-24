@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "../../navigation/AuthContext";
 import { db } from "../services/firebaseService";
 import colors from "../constants/colors";
+import { LinearGradient } from "expo-linear-gradient";
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
 
@@ -234,7 +235,7 @@ const SearchProfessionalsScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <LinearGradient colors={colors.gradientePrimario} style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Buscar profesionales</Text>
                 <Text style={styles.headerSub}>Selecciona una categoría de servicio</Text>
@@ -244,6 +245,7 @@ const SearchProfessionalsScreen = () => {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.chipsContainer}
+                style={{ flexGrow: 0 }}
             >
                 {CATEGORIAS.map(c => (
                     <TouchableOpacity
@@ -308,44 +310,45 @@ const SearchProfessionalsScreen = () => {
                 onCancel={() => setModalVisible(false)}
                 loading={loadingRequest}
             />
-        </View>
+        </LinearGradient>
     );
 };
 
 // ─── Estilos ──────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f5f5f5' },
+    container: { flex: 1 },
     centered: {
         flex: 1, justifyContent: 'center', alignItems: 'center',
         gap: 12, paddingHorizontal: 32,
     },
-    emptyText: { fontSize: 15, color: '#aaa', textAlign: 'center', lineHeight: 22 },
+    emptyText: { fontSize: 15, color: 'rgba(255,255,255,0.6)', textAlign: 'center', lineHeight: 22 },
 
     header: {
-        backgroundColor: '#fff', paddingHorizontal: 20,
+        backgroundColor: 'rgba(255,255,255,0.10)', paddingHorizontal: 20,
         paddingTop: 20, paddingBottom: 12,
-        borderBottomWidth: 0.5, borderBottomColor: '#e0e0e0',
+        borderBottomWidth: 1, borderBottomColor: 'rgba(255,255,255,0.18)',
     },
-    headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#111' },
-    headerSub: { fontSize: 13, color: '#888', marginTop: 2 },
+    headerTitle: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+    headerSub: { fontSize: 13, color: 'rgba(255,255,255,0.6)', marginTop: 2 },
 
-    chipsContainer: { paddingHorizontal: 16, paddingVertical: 12, gap: 8 },
+    chipsContainer: { paddingHorizontal: 16, paddingVertical: 12, gap: 8, aligenItems: 'center' },
     chip: {
         flexDirection: 'row', alignItems: 'center', gap: 6,
-        paddingHorizontal: 14, paddingVertical: 8,
+        paddingHorizontal: 12, paddingVertical: 7,
         borderRadius: 20, borderWidth: 1,
-        borderColor: '#ddd', backgroundColor: '#fff',
+        borderColor: 'rgba(255,255,255,0.3)', backgroundColor: 'rgba(255,255,255,0.08)', alignSelf: 'flex-start'
     },
-    chipActive: { backgroundColor: '#185FA5', borderColor: '#185FA5' },
-    chipText: { fontSize: 13, color: '#666' },
-    chipTextActive: { color: '#fff', fontWeight: '600' },
+    chipActive: { backgroundColor: '#fff', borderColor: '#fff' },
+    chipText: { fontSize: 13, color: 'rgba(255,255,255,0.7)' },
+    chipTextActive: { color: '#1e3a86', fontWeight: '600' },
 
-    list: { padding: 16, gap: 12 },
+    list: { padding: 0, paddingBottom: 24, gap: 0 },
 
     card: {
-        backgroundColor: '#fff', borderRadius: 14,
-        padding: 16, borderWidth: 0.5, borderColor: '#e0e0e0',
+        backgroundColor: 'rgba(255,255,255,0.95)', borderRadius: 14,
+        padding: 16, borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.3)', marginHorizontal: 16,
+        marginBottom: 12,
     },
     cardHeader: {
         flexDirection: 'row', alignItems: 'center',
@@ -375,7 +378,7 @@ const styles = StyleSheet.create({
     solicitarBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
 
     modalOverlay: {
-        flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end',
+        flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end',
     },
     modalCard: {
         backgroundColor: '#fff', borderTopLeftRadius: 20,

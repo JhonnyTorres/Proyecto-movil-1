@@ -1,155 +1,178 @@
+# 🏠 ServiHogar
 
-# 🏠 Plataforma de Servicios para el Hogar
-
-## 📌 Descripción
-
-Aplicación móvil desarrollada con React Native (Expo) que permite a los usuarios registrarse, iniciar sesión y acceder a una plataforma orientada a la futura conexión con profesionales de servicios para el hogar como plomería, electricidad y construcción.
+> Plataforma móvil que conecta clientes con profesionales de servicios del hogar.
 
 ---
 
-## 💡 Idea de negocio
+## 💡 Idea de Negocio
 
-La aplicación busca conectar personas que requieren servicios para el hogar con profesionales capacitados, facilitando la contratación de servicios de manera rápida, segura y confiable.
+El mercado de servicios del hogar en Colombia carece de una plataforma digital confiable que conecte a clientes con profesionales calificados de manera rápida y transparente. ServiHogar resuelve este problema ofreciendo un **marketplace móvil** donde:
 
-En esta primera versión (Sprint 1), se implementa la base del sistema de autenticación y navegación, sobre la cual se construirán las funcionalidades de conexión entre usuarios y prestadores de servicios.
+- Los **clientes** pueden buscar y contratar profesionales por categoría de servicio.
+- Los **profesionales** pueden ofrecer sus servicios, gestionar solicitudes y construir reputación.
+- El **sistema de calificaciones** genera confianza entre ambas partes.
+- Las **actualizaciones en tiempo real** mantienen informados a clientes y profesionales en cada etapa del servicio.
 
----
-
-## 🚀 Funcionalidades implementadas (Sprint 1)
-
-* Registro de usuarios
-* Inicio de sesión
-* Cierre de sesión
-* Integración con Firebase Authentication
-* Navegación entre pantallas
-* Interfaces con estilos personalizados
+### Categorías de servicio disponibles
+Plomería · Electricidad · Construcción · Pintura · Carpintería · Cerrajería · Jardinería · Limpieza · Gas · Climatización
 
 ---
 
-## 📱 Vistas de la aplicación
+## 📱 Capturas de Pantalla
 
-### 🔐 Login
+| Login | Registro | Selección de Rol |
+|-------|----------|-----------------|
+| ![Login](docs/screenshots/login.png) | ![Registro](docs/screenshots/registro.png) | ![Rol](docs/screenshots/rol.png) |
 
-Permite a los usuarios autenticarse mediante correo electrónico y contraseña utilizando Firebase.
-
-### 📝 Registro
-
-Formulario para la creación de nuevas cuentas de usuario.
-
-### 🏠 Home
-
-Vista principal que se muestra después del inicio de sesión.
-
-### 👤 Usuario
-
-Pantalla donde se visualiza la información del usuario autenticado.
-
-### ⚙️ Ajustes
-
-Incluye opciones de configuración y la funcionalidad de cierre de sesión.
+| Home Cliente | Buscar Profesionales | Mis Servicios |
+|-------------|---------------------|---------------|
+| ![Home](docs/screenshots/home_cliente.png) | ![Buscar](docs/screenshots/buscar.png) | ![Servicios](docs/screenshots/mis_servicios.png) |
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## 🛠️ Stack Tecnológico
 
-La aplicación fue desarrollada utilizando:
-
-* **React Native con Expo**
-* **Firebase Authentication**
-* **React Navigation (Stack y Bottom Tabs)**
-* **AsyncStorage** (gestión básica de almacenamiento local)
-
----
-
-## 🔐 Autenticación
-
-Se implementa un sistema de autenticación utilizando Firebase Authentication, que permite:
-
-* Registro de nuevos usuarios
-* Inicio de sesión
-* Cierre de sesión
-* Persistencia básica de la sesión
+| Tecnología | Uso |
+|---|---|
+| React Native + Expo | Framework principal de desarrollo móvil |
+| Firebase Auth | Autenticación de usuarios |
+| Firestore | Base de datos en tiempo real en la nube |
+| SQLite (expo-sqlite) | Persistencia local y modo offline |
+| Cloudinary | Almacenamiento de imágenes de perfil |
+| React Navigation | Navegación entre pantallas |
+| expo-linear-gradient | Gradientes visuales en pantallas de auth |
 
 ---
 
-## 📸 Evidencias
+## 🚀 Funcionalidades Implementadas
 
-La aplicación cuenta con las siguientes funcionalidades visuales:
+### Autenticación
+- [x] Registro con nombre, correo y contraseña
+- [x] Selección de rol (cliente / profesional)
+- [x] Perfil profesional con categorías y descripción
+- [x] Inicio de sesión
+- [x] Cierre de sesión
 
-* Pantalla de inicio de sesión
-* Pantalla de registro
-* Pantalla principal (Home)
-* Cierre de sesión
+### Cliente
+- [x] Home con métricas y acceso rápido por categoría
+- [x] Búsqueda de profesionales por categoría de servicio
+- [x] Solicitud de servicio con confirmación
+- [x] Historial de servicios con filtros por estado
+- [x] Calificación con estrellas y comentario
+- [x] Vista de servicios rechazados con mensaje informativo
 
-## 📸 Evidencias
+### Profesional
+- [x] Home con resumen de solicitudes y estado del perfil
+- [x] Panel de solicitudes en tiempo real
+- [x] Aceptar o rechazar solicitudes
+- [x] Marcar servicios como finalizados
+- [x] Calificación promedio actualizada automáticamente
 
-A continuación, se presentan algunas capturas del funcionamiento de la aplicación:
+### Perfil y configuración
+- [x] Gestión de foto de perfil con Cloudinary
+- [x] Ajustes con cierre de sesión
 
-### 🔐 Inicio de sesión
-![Login](./assets/Login.jpeg)
-![Login formulario](./assets/Login-1.jpeg)
-
-### 📝 Registro
-![Registro](./assets/Register.jpeg)
-![Registro formulario](./assets/Register-1.jpeg)
-
-### 🏠 Home
-![Home](./assets/Home.jpeg)
-
-### 🚪 Cierre de sesión
-![Logout](./assets/Logout.jpeg)
-![Logout confirmación](./assets/Logout-1.jpeg)
+### Persistencia local (SQLite)
+- [x] Caché de servicios del cliente
+- [x] Historial de búsquedas recientes por categoría
+- [x] Profesionales vistos recientemente
 
 ---
 
-## ⚙️ Instalación y ejecución
+## 📁 Estructura del Proyecto
 
-1. Clonar el repositorio:
-
-```bash
-git clone https://github.com/JhonnyTorres/Proyecto-movil-1
+```
+servihogar/
+├── navigation/
+│   ├── AppNavigator.js       # Navegación principal con tabs y stack
+│   ├── AuthContext.js        # Contexto de autenticación y rol
+│   └── AppProvider.js
+├── src/
+│   ├── screens/
+│   │   ├── auth/
+│   │   │   ├── LoginScreen.js
+│   │   │   ├── RegisterScreen.js
+│   │   │   ├── RoleSelectionScreen.js
+│   │   │   └── ProfessionalProfileScreen.js
+│   │   ├── HomeScreen.js
+│   │   ├── SearchProfessionalsScreen.js
+│   │   ├── ClientServicesScreen.js
+│   │   ├── ProfessionalServicesScreen.js
+│   │   ├── UserScreen.js
+│   │   ├── SettingsScreen.js
+│   │   └── SplashScreen.js
+│   ├── services/
+│   │   ├── firebaseService.js
+│   │   ├── cloudinaryService.js
+│   │   ├── sqliteService.js
+│   │   └── userService.js
+│   └── constants/
+│       └── colors.js
+├── docs/
+│   ├── ManualTecnico_ServiHogar.docx
+│   └── ManualUsuario_ServiHogar.docx
+├── App.js
+└── README.md
 ```
 
-2. Instalar dependencias:
+---
+
+## ⚙️ Instalación y Configuración
+
+### Requisitos previos
+- Node.js 18 o superior
+- Expo CLI: `npm install -g expo-cli`
+- Cuenta en [Firebase](https://firebase.google.com)
+- Cuenta en [Cloudinary](https://cloudinary.com)
+
+### Pasos
 
 ```bash
+# 1. Clonar el repositorio
+git clone https://github.com/JhonnyTorres/Proyecto-movil-1.git
+cd servihogar
+
+# 2. Instalar dependencias
 npm install
-```
 
-3. Ejecutar la aplicación:
-
-```bash
+# 3. Iniciar el servidor de desarrollo
 npx expo start
 ```
 
+### Configuración de Firebase
+
+Edita `src/services/firebaseService.js` con tus credenciales de Firebase:
+
+```js
+const firebaseConfig = {
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_PROJECT.firebaseapp.com",
+  projectId: "TU_PROJECT_ID",
+  storageBucket: "TU_PROJECT.appspot.com",
+  messagingSenderId: "TU_SENDER_ID",
+  appId: "TU_APP_ID"
+};
+```
+
+### Índices requeridos en Firestore
+
+| Colección | Campo 1 | Campo 2 |
+|---|---|---|
+| `servicios` | `clienteId` (Asc) | `creadoEn` (Desc) |
+| `servicios` | `profesionalId` (Asc) | `creadoEn` (Desc) |
+| `usuarios` | `rol` (Asc) | `servicios` (Arrays) |
+
 ---
 
-## 🔗 Repositorio
+## 📄 Documentación
 
-👉 https://github.com/JhonnyTorres/Proyecto-movil-1
-
-Nombre del proyecto en desarrollo: Plataforma de Servicios para el Hogar
-
----
-
-## 📈 Estado del proyecto
-
-🚧 En desarrollo – Sprint 1 completado
+- [Manual Técnico](docs/ManualTecnico_ServiHogar.docx)
+- [Manual de Usuario](docs/ManualUsuario_ServiHogar.docx)
 
 ---
 
 ## 👨‍💻 Autor
 
-Jonathan Torres
+Desarrollado como proyecto de aula para la materia de **Desarrollo Móvil** — Universidad Católica Luis Amigó.
+## 📸 Evidencias
 
----
-
-## 📌 Próximas mejoras
-
-* Implementación de roles (cliente / técnico)
-* Conexión entre usuarios y profesionales
-* Sistema de solicitud de servicios
-* Notificaciones
-* Mejora de la interfaz de usuario
-
----

@@ -26,7 +26,7 @@ Plomería · Electricidad · Construcción · Pintura · Carpintería · Cerraje
 
 | Home Cliente | Buscar Profesionales | Mis Servicios |
 |:---:|:---:|:---:|
-| <img src="assets/Home.jpeg" width="250"> | <img src="assets/SearchProfessionalsScreen.jpeg" width="250"> | <img src="assets/ClienteServicesScreen.jpeg" width="250"> |
+| <img src="assets/Home.jpeg" width="250"> | <img src="assets/SearchProfessionalsScreen.jpeg" width="250"> | <img src="assets/ClientServicesScreen.jpeg" width="250"> |
 
 ---
 

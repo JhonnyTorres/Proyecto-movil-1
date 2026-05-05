@@ -21,12 +21,12 @@ Plomería · Electricidad · Construcción · Pintura · Carpintería · Cerraje
 ## 📱 Capturas de Pantalla
 
 | Login | Registro | Selección de Rol |
-|-------|----------|-----------------|
-| ![Login](docs/screenshots/login.png) | ![Registro](docs/screenshots/registro.png) | ![Rol](docs/screenshots/rol.png) |
+|:---:|:---:|:---:|
+| <img src="assets/Login.jpeg" width="250"> | <img src="assets/Register.jpeg" width="250"> | <img src="assets/RoleSelectionScreen.jpeg" width="250"> |
 
 | Home Cliente | Buscar Profesionales | Mis Servicios |
-|-------------|---------------------|---------------|
-| ![Home](docs/screenshots/home_cliente.png) | ![Buscar](docs/screenshots/buscar.png) | ![Servicios](docs/screenshots/mis_servicios.png) |
+|:---:|:---:|:---:|
+| <img src="assets/Home.jpeg" width="250"> | <img src="assets/SearchProfessionalsScreen.jpeg" width="250"> | <img src="assets/ClienteServicesScreen.jpeg" width="250"> |
 
 ---
 

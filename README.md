@@ -130,7 +130,7 @@ servihogar/
 ```bash
 # 1. Clonar el repositorio
 git clone https://github.com/JhonnyTorres/Proyecto-movil-1.git
-cd servihogar
+cd Proyecto-movil-1
 
 # 2. Instalar dependencias
 npm install
